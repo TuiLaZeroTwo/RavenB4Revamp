@@ -158,3 +158,4 @@ class AimAssist : Module("AimAssist", ModuleCategory.COMBAT) {
         return friends
     }
 }
+}
