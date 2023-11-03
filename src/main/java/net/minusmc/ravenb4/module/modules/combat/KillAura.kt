@@ -1,24 +1,25 @@
 package net.minusmc.ravenb4.module.modules.combat
 
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.item.EntityItemFrame
-import net.minecraft.init.Blocks
-import net.minecraft.util.BlockPos
-import net.minecraft.util.MovingObjectPosition
-import net.minecraft.util.Vec3
-import net.minecraftforge.client.event.MouseEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraft.client.Minecraft
+import net.minecraft.entity.player.EntityPlayer
 import net.minusmc.ravenb4.module.Module
 import net.minusmc.ravenb4.module.ModuleCategory
 import net.minusmc.ravenb4.setting.impl.SliderSetting
-import net.minusmc.ravenb4.setting.impl.TickSetting
-import org.apache.commons.lang3.RandomUtils
-import net.minecraft.entity.player.EntityPlayer
 
+class KillAura : Module("KillAura", ModuleCategory.COMBAT) {
+    private val mc = Minecraft.getMinecraft()
+    private val range: SliderSetting = SliderSetting("Range", 3.2, 1.0, 6.0, 0.1)
 
-class KillAura: Module("KillAura", ModuleCategory.combat){
-    
+    init {
+        addSetting(range)
+    }
 
-    var target: EntityPlayer? = null
+    override fun onUpdate() {
+        val playerEntities = mc.theWorld.playerEntities
+        for (entity in playerEntities) {
+            if (entity != mc.thePlayer && mc.thePlayer.getDistanceToEntity(entity) <= range.getInput()) {
+                mc.playerController.attackEntity(mc.thePlayer, entity)
+            }
+        }
+    }
 }
